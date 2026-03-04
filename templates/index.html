@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+    <h1>Latest Posts</h1>
+    
+    {% if not logged_in %}
+        <p class="text-center mt-2 mb-4">Public read-only blog</p>
+    {% endif %}
+
+    {% if posts %}
+        <div class="posts-list">
+            {% for post in posts %}
+                <article class="post-item">
+                    <div class="post-meta">
+                        <span>{{ post.date }}</span>
+                        <span>by {{ post.author }}</span>
+                    </div>
+                    
+                    <h2 class="post-title">
+                        <a href="{{ url_for('blog.show_post', post_id=post.id) }}">{{ post.title }}</a>
+                    </h2>
+                    
+                    <p class="post-excerpt">
+                        {{ post.content[:200] }}{% if post.content|length > 200 %}...{% endif %}
+                    </p>
+                    
+                    <div class="post-actions">
+                        <a href="{{ url_for('blog.show_post', post_id=post.id) }}" class="btn btn-primary">
+                            Read
+                        </a>
+                        
+                        {% if logged_in %}
+                            <div>
+                                <a href="{{ url_for('admin.edit_post', post_id=post.id) }}" class="btn btn-secondary">
+                                    Edit
+                                </a>
+                                <a href="{{ url_for('admin.delete_post', post_id=post.id) }}" class="btn btn-danger"
+                                 onclick="return confirm('Delete this post?')">
+                                    Delete
+                                </a>
+                            </div>
+                        {% endif %}
+                    </div>
+                </article>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="empty-state">
+            <h2>No posts yet</h2>
+            <p class="mt-2">Check back soon for updates.</p>
+            {% if logged_in %}
+                <a href="{{ url_for('admin.create_post') }}" class="btn btn-primary mt-3">Create First Post</a>
+            {% endif %}
+        </div>
+    {% endif %}
+{% endblock %}
