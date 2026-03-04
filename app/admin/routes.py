@@ -23,7 +23,7 @@ def admin_required(f) -> Callable[..., Any]:
         return decorated_function
 
 @admin.route('/login', methods=['GET', 'POST'])
-@limiter.limit('10 per hour')
+@limiter.limit('30 per hour')
 def login() -> str|Response:
     if session.get('logged_in'):
         return redirect(url_for('blog.index'))
@@ -115,4 +115,5 @@ def delete_post(post_id) -> Response:
     posts: dict = [p for p in posts if p['id'] != post_id]
     save_posts(posts)
     flash('Post deleted successfully!')
+
     return redirect(url_for('blog.index'))
